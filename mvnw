@@ -14,7 +14,6 @@ if [ -z "$MAVEN_SKIP_RC" ] ; then
 
 fi
 
-# OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
 darwin=false;
 mingw=false
@@ -22,8 +21,7 @@ case "$(uname)" in
   CYGWIN*) cygwin=true ;;
   MINGW*) mingw=true;;
   Darwin*) darwin=true
-    # Use /usr/libexec/java_home if available, otherwise fall back to /Library/Java/Home
-    # See https://developer.apple.com/library/mac/qa/qa1170/_index.html
+    
     if [ -z "$JAVA_HOME" ]; then
       if [ -x "/usr/libexec/java_home" ]; then
         JAVA_HOME="$(/usr/libexec/java_home)"; export JAVA_HOME
@@ -40,7 +38,6 @@ if [ -z "$JAVA_HOME" ] ; then
   fi
 fi
 
-# For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin ; then
   [ -n "$JAVA_HOME" ] &&
     JAVA_HOME=$(cygpath --unix "$JAVA_HOME")
@@ -48,7 +45,6 @@ if $cygwin ; then
     CLASSPATH=$(cygpath --path --unix "$CLASSPATH")
 fi
 
-# For Mingw, ensure paths are in UNIX format before anything is touched
 if $mingw ; then
   [ -n "$JAVA_HOME" ] && [ -d "$JAVA_HOME" ] &&
     JAVA_HOME="$(cd "$JAVA_HOME" || (echo "cannot cd into $JAVA_HOME."; exit 1); pwd)"
@@ -57,7 +53,6 @@ fi
 if [ -z "$JAVA_HOME" ]; then
   javaExecutable="$(which javac)"
   if [ -n "$javaExecutable" ] && ! [ "$(expr "\"$javaExecutable\"" : '\([^ ]*\)')" = "no" ]; then
-    # readlink(1) is not available as standard on Solaris 10.
     readLink=$(which readlink)
     if [ ! "$(expr "$readLink" : '\([^ ]*\)')" = "no" ]; then
       if $darwin ; then
@@ -97,8 +92,7 @@ if [ -z "$JAVA_HOME" ] ; then
   echo "Warning: JAVA_HOME environment variable is not set."
 fi
 
-# traverses directory structure from process work directory to filesystem root
-# first directory with .mvn subdirectory is considered project base directory
+
 find_maven_basedir() {
   if [ -z "$1" ]
   then
@@ -113,23 +107,16 @@ find_maven_basedir() {
       basedir=$wdir
       break
     fi
-    # workaround for JBEAP-8937 (on Solaris 10/Sparc)
     if [ -d "${wdir}" ]; then
       wdir=$(cd "$wdir/.." || exit 1; pwd)
     fi
-    # end of workaround
   done
   printf '%s' "$(cd "$basedir" || exit 1; pwd)"
 }
 
-# concatenates all lines of a file
 concat_lines() {
   if [ -f "$1" ]; then
-    # Remove \r in case we run on Windows within Git Bash
-    # and check out the repository with auto CRLF management
-    # enabled. Otherwise, we may read lines that are delimited with
-    # \r\n and produce $'-Xarg\r' rather than -Xarg due to word
-    # splitting rules.
+    
     tr -s '\r\n' ' ' < "$1"
   fi
 }
@@ -148,10 +135,6 @@ fi
 MAVEN_PROJECTBASEDIR=${MAVEN_BASEDIR:-"$BASE_DIR"}; export MAVEN_PROJECTBASEDIR
 log "$MAVEN_PROJECTBASEDIR"
 
-##########################################################################################
-# Extension to allow automatically downloading the maven-wrapper.jar from Maven-central
-# This allows using the maven wrapper in projects that prohibit checking in binary data.
-##########################################################################################
 wrapperJarPath="$MAVEN_PROJECTBASEDIR/.mvn/wrapper/maven-wrapper.jar"
 if [ -r "$wrapperJarPath" ]; then
     log "Found $wrapperJarPath"
@@ -164,7 +147,6 @@ else
       wrapperUrl="https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.2.0/maven-wrapper-3.2.0.jar"
     fi
     while IFS="=" read -r key value; do
-      # Remove '\r' from value to allow usage on windows as IFS does not consider '\r' as a separator ( considers space, tab, new line ('\n'), and custom '=' )
       safeValue=$(echo "$value" | tr -d '\r')
       case "$key" in (wrapperUrl) wrapperUrl="$safeValue"; break ;;
       esac
@@ -195,7 +177,6 @@ else
         log "Falling back to using Java to download"
         javaSource="$MAVEN_PROJECTBASEDIR/.mvn/wrapper/MavenWrapperDownloader.java"
         javaClass="$MAVEN_PROJECTBASEDIR/.mvn/wrapper/MavenWrapperDownloader.class"
-        # For Cygwin, switch paths to Windows format before running javac
         if $cygwin; then
           javaSource=$(cygpath --path --windows "$javaSource")
           javaClass=$(cygpath --path --windows "$javaClass")
@@ -212,11 +193,7 @@ else
         fi
     fi
 fi
-##########################################################################################
-# End of extension
-##########################################################################################
 
-# If specified, validate the SHA-256 sum of the Maven wrapper jar file
 wrapperSha256Sum=""
 while IFS="=" read -r key value; do
   case "$key" in (wrapperSha256Sum) wrapperSha256Sum=$value; break ;;
@@ -247,7 +224,6 @@ fi
 
 MAVEN_OPTS="$(concat_lines "$MAVEN_PROJECTBASEDIR/.mvn/jvm.config") $MAVEN_OPTS"
 
-# For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   [ -n "$JAVA_HOME" ] &&
     JAVA_HOME=$(cygpath --path --windows "$JAVA_HOME")
@@ -257,14 +233,12 @@ if $cygwin; then
     MAVEN_PROJECTBASEDIR=$(cygpath --path --windows "$MAVEN_PROJECTBASEDIR")
 fi
 
-# Provide a "standardized" way to retrieve the CLI args that will
-# work with both Windows and non-Windows executions.
+
 MAVEN_CMD_LINE_ARGS="$MAVEN_CONFIG $*"
 export MAVEN_CMD_LINE_ARGS
 
 WRAPPER_LAUNCHER=org.apache.maven.wrapper.MavenWrapperMain
 
-# shellcheck disable=SC2086 # safe args
 exec "$JAVACMD" \
   $MAVEN_OPTS \
   $MAVEN_DEBUG_OPTS \
